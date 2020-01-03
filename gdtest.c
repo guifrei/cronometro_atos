@@ -135,7 +135,7 @@ void drawTime(int time) {
 	gdImageFilledEllipse(im, 360, 160, 15, 15, black);
 	gdImageFilledEllipse(im, 360, 240, 15, 15, black);
 
-	FILE* png = fopen("/home/cx3d/workspace_mestrado/gdtest/logo atos.png", "rb");
+	FILE* png = fopen("logo atos.png", "rb");
 	gdImagePtr logo = gdImageCreateFromPng(png);
 	gdImageCopy(im, logo, 300, 300, 0, 0, 400, 165);
 
