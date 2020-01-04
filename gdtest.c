@@ -107,13 +107,19 @@ void drawTime(int time) {
 	int white;
 
 	/* Allocate the image: 64 pixels across by 64 pixels tall */
-	im = gdImageCreate(720, 486);
+	im = gdImageCreateTrueColor(720, 486);
 
 	/* Allocate the color black (red, green and blue all minimum).
 	 Since this is the first color in a new image, it will
 	 be the background color. */
-	white = gdImageColorAllocate(im, 128, 255, 255);
+	white = gdImageColorAllocate(im, 255, 255, 255);
 	black = gdImageColorAllocate(im, 0, 0, 0);
+
+	for (int i = 0; i < 720; i++) {
+		for (int j = 0; j < 486; j++) {
+			gdImageSetPixel(im, i, j, white);
+		}
+	}
 
 	double shift;
 
