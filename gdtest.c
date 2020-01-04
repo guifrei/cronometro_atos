@@ -166,8 +166,16 @@ void drawTime(int time) {
 }
 
 int main() {
+	for (int i = 0; i <= tmax; i++)
+		if (i % 10 == 0)
+			printf("=");
+	printf("\n");
 	for (int i = 0; i <= tmax; i++) {
 		drawTime(tmax - i);
+		if (i % 10 == 0)
+			printf(".");
 	}
-
+	printf("\n");
+	system("mencoder mf://f*.png -mf fps=1 -ovc copy -oac copy -o output.avi");
+	system("ffmpeg -y -i output.avi -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p working.mp4");
 }
