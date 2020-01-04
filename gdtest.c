@@ -17,6 +17,7 @@ double sq = sqrt(2.0) / 2.0 * 10.0;
 int codes[] = { 119, 18, 93, 91, 58, 107, 111, 82, 127, 123 };
 
 int tmax = 5 * 60;
+int count = 0;
 
 void drawHorizontal(double xref, double yref, gdImagePtr im) {
 	//int white = gdImageColorAllocate(im, 255, 255, 255);
@@ -177,6 +178,7 @@ void drawTime(int time) {
 	fclose(pngout);
 
 	/* Destroy the image in memory. */
+	gdImageDestroy(logo);
 	gdImageDestroy(im);
 }
 
