@@ -1,6 +1,10 @@
 //mencoder mf://f*.png -mf fps=1 -ovc copy -oac copy -o output.avi
 //ffmpeg -i output.avi -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p working.mp4
 
+
+//Extrai quadro a quadro
+//ffmpeg -i ~/WORSHIP\ COUNTDOWN\ 5\ MIN\ \(CONTAGEM\ REGRESSIVA\ -\ CULTO\ JOVEM\)-iTa_cDVN1xw.webm -r 24 image-%04d.bmp
+
 /* Bring in gd library functions */
 #include "gd.h"
 
@@ -15,7 +19,7 @@ int codes[] = { 119, 18, 93, 91, 58, 107, 111, 82, 127, 123 };
 int tmax = 5 * 60;
 
 void drawHorizontal(double xref, double yref, gdImagePtr im) {
-	int white = gdImageColorAllocate(im, 255, 255, 255);
+	//int white = gdImageColorAllocate(im, 255, 255, 255);
 	int black = gdImageColorAllocate(im, 0, 0, 0);
 
 	gdPointPtr points = (gdPointPtr) calloc(6, sizeof(gdPoint));
@@ -42,7 +46,7 @@ void drawHorizontal(double xref, double yref, gdImagePtr im) {
 }
 
 void drawVertical(double xref, double yref, gdImagePtr im) {
-	int white = gdImageColorAllocate(im, 255, 255, 255);
+	//int white = gdImageColorAllocate(im, 255, 255, 255);
 	int black = gdImageColorAllocate(im, 0, 0, 0);
 
 	gdPointPtr points = (gdPointPtr) calloc(6, sizeof(gdPoint));
@@ -108,7 +112,7 @@ void drawTime(int time) {
 	/* Allocate the color black (red, green and blue all minimum).
 	 Since this is the first color in a new image, it will
 	 be the background color. */
-	white = gdImageColorAllocate(im, 255, 255, 255);
+	white = gdImageColorAllocate(im, 128, 255, 255);
 	black = gdImageColorAllocate(im, 0, 0, 0);
 
 	double shift;
@@ -137,6 +141,11 @@ void drawTime(int time) {
 
 	FILE* png = fopen("logo atos.png", "rb");
 	gdImagePtr logo = gdImageCreateFromPng(png);
+	gdImagePaletteToTrueColor(logo);
+	int color = gdImageGetPixel(logo, 1, 1);
+	gdImageColorTransparent(logo, color);
+	gdImageAlphaBlending(logo, 0);
+	//gdImageSaveAlpha(logo, 1);
 	gdImageCopy(im, logo, 300, 300, 0, 0, 400, 165);
 
 	fclose(png);
@@ -156,7 +165,7 @@ void drawTime(int time) {
 	pngout = fopen(filename, "wb");
 
 	/* Output the image to the disk file in PNG format. */
-	gdImagePng(im, pngout);
+	gdImagePngEx(im, pngout, 0);
 
 	/* Close the files. */
 	fclose(pngout);
