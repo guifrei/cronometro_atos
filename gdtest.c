@@ -6,15 +6,16 @@
 //ffmpeg -i VID_20200108_210308994.mp4 -r 24 leticia_%03d.bmp
 
 /* Bring in gd library functions */
+#undef __STRICT_ANSI__
+#include <math.h>
 #include "gd.h"
 /* Bring in standard I/O so we can output the PNG to a file */
 #include <stdio.h>
-#include <math.h>
 
 int w = 20;
-int npts = 500;
+int npts = 2000;
 
-void drawColor(gdImagePtr bmpMainFrame, int color, int shift) {
+void drawColor(gdImagePtr bmpMainFrame, int color, int shift, double ang) {
 
 	for (int j = shift * w; j < (shift + 1) * w; j++) {
 		double x1 = 650.0 - j;
@@ -28,9 +29,9 @@ void drawColor(gdImagePtr bmpMainFrame, int color, int shift) {
 		double r2 = (x1 - xr) * (x1 - xr) + (y1 - yr) * (y1 - yr);
 		double r = sqrt(r2);
 		double theta2 = atan((y2 - yr) / (x2 - xr));
-		double theta1 = theta2 + M_PI;
+		double theta1 = theta2 + ang;
 		for (int i = 0; i <= npts; i++) {
-			double theta = (theta2 - theta1) / (double)npts * (double) i + theta1;
+			double theta = (theta2 - theta1) / (double) npts * (double) i + theta1;
 			double x = xr + r * cos(theta);
 			double y = yr + r * sin(theta);
 			gdImageSetPixel(bmpMainFrame, x, -y, color);
@@ -40,41 +41,62 @@ void drawColor(gdImagePtr bmpMainFrame, int color, int shift) {
 
 int main() {
 
-	gdImagePtr bmpMainFrame = gdImageCreateTrueColor(1920, 1080);
+	char bmpInputFileName[16];
+	char bmpOutputFileName[17];
 
-	FILE* bmpFrame = fopen("leticia_080.bmp", "rb");
-	gdImagePtr frame = gdImageCreateFromBmp(bmpFrame);
+	int startidx = 24;
+	int stopidx = 57;
+	int endidx = 118;
+	for (int idx = startidx; idx <= endidx; idx++) {
+		printf("%i\n", idx);
+		if (idx < 10) {
+			sprintf(bmpInputFileName, "leticia_00%d.jpg", idx);
+			sprintf(bmpOutputFileName, "letician_00%d.jpg", idx);
+		} else if (idx < 100) {
+			sprintf(bmpInputFileName, "leticia_0%d.jpg", idx);
+			sprintf(bmpOutputFileName, "letician_0%d.jpg", idx);
+		} else {
+			sprintf(bmpInputFileName, "leticia_%d.jpg", idx);
+			sprintf(bmpOutputFileName, "letician_%d.jpg", idx);
+		}
+		bmpInputFileName[15] = '\0';
+		bmpOutputFileName[16] = '\0';
 
-	gdImageCopy(bmpMainFrame, frame, 0, 0, 0, 0, 1920, 1080);
+		gdImagePtr bmpMainFrame = gdImageCreateTrueColor(1920, 1080);
 
-	int black = gdImageColorAllocate(bmpMainFrame, 0, 0, 0);
-	int white = gdImageColorAllocate(bmpMainFrame, 255, 255, 255);
-	gdImageFilledEllipse(bmpMainFrame, 1300, 550, 15, 15, black);
-	gdImageFilledEllipse(bmpMainFrame, 650, 640, 15, 15, white);
+		int colors[7];
+		colors[0] = gdImageColorAllocate(bmpMainFrame, 255, 0, 0); //red
+		colors[1] = gdImageColorAllocate(bmpMainFrame, 255, 165, 0); //orange
+		colors[2] = gdImageColorAllocate(bmpMainFrame, 255, 255, 0); //yellow
+		colors[3] = gdImageColorAllocate(bmpMainFrame, 0, 255, 0); //green
+		colors[4] = gdImageColorAllocate(bmpMainFrame, 0, 0, 255); //blue
+		colors[5] = gdImageColorAllocate(bmpMainFrame, 75, 0, 130); //indigo
+		colors[6] = gdImageColorAllocate(bmpMainFrame, 79, 47, 79); //violet
 
-	int red = gdImageColorAllocate(bmpMainFrame, 255, 0, 0);
-	drawColor(bmpMainFrame, red, 0);
-	int orange = gdImageColorAllocate(bmpMainFrame, 255, 165, 0);
-	drawColor(bmpMainFrame, orange, 1);
-	int yellow = gdImageColorAllocate(bmpMainFrame, 255, 255, 0);
-	drawColor(bmpMainFrame, yellow, 2);
-	int green = gdImageColorAllocate(bmpMainFrame, 0, 255, 0);
-	drawColor(bmpMainFrame, green, 3);
-	int blue = gdImageColorAllocate(bmpMainFrame, 0, 0, 255);
-	drawColor(bmpMainFrame, blue, 4);
-	int indigo = gdImageColorAllocate(bmpMainFrame, 75, 0, 130);
-	drawColor(bmpMainFrame, indigo, 5);
-	int violet = gdImageColorAllocate(bmpMainFrame, 79, 47, 79);
-	drawColor(bmpMainFrame, violet, 6);
+		FILE* bmpFrame = fopen(bmpInputFileName, "rb");
+		gdImagePtr frame = gdImageCreateFromJpeg(bmpFrame);
 
-	FILE* mainFrame = fopen("teste.bmp", "w");
-	gdImageBmp(bmpMainFrame, mainFrame, 0);
+		gdImageCopy(bmpMainFrame, frame, 0, 0, 0, 0, 1920, 1080);
 
-	gdImageDestroy(bmpMainFrame);
-	fclose(mainFrame);
+		double ang;
 
-	gdImageDestroy(frame);
-	fclose(bmpFrame);
+		if (idx <= stopidx)
+			ang = ((double) idx - (double) startidx) / ((double) stopidx - (double) startidx) * M_PI;
+		else
+			ang = M_PI;
+
+		for (int i = 0; i < 7; i++)
+			drawColor(bmpMainFrame, colors[i], i, ang);
+
+		FILE* mainFrame = fopen(bmpOutputFileName, "w");
+		gdImageJpeg(bmpMainFrame, mainFrame, 100);
+
+		gdImageDestroy(bmpMainFrame);
+		fclose(mainFrame);
+
+		gdImageDestroy(frame);
+		fclose(bmpFrame);
+	}
 
 	return 0;
 

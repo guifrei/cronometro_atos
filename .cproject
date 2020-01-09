@@ -27,26 +27,25 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.437273731" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.exe.debug.option.optimization.level.516440049" name="Optimization Level" superClass="gnu.c.compiler.exe.debug.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option defaultValue="gnu.c.debugging.level.max" id="gnu.c.compiler.exe.debug.option.debugging.level.2104212403" name="Debug Level" superClass="gnu.c.compiler.exe.debug.option.debugging.level" useByScannerDiscovery="false" valueType="enumerated"/>
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.paths.865547771" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+								<option id="gnu.c.compiler.option.include.paths.865547771" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="/home/cx3d/gd/include"/>
 									<listOptionValue builtIn="false" value="/home/cx3d/gsl-2.6"/>
 								</option>
+								<option id="gnu.c.compiler.option.misc.other.1216878031" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -std=c99" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1983637117" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1140723483" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug">
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.link.option.paths.1758683821" name="Library search path (-L)" superClass="gnu.c.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
+								<option id="gnu.c.link.option.paths.1758683821" name="Library search path (-L)" superClass="gnu.c.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/home/cx3d/gd/lib"/>
 									<listOptionValue builtIn="false" value="/home/cx3d/gsl-2.6/.libs"/>
 									<listOptionValue builtIn="false" value="/home/cx3d/gsl-2.6/cblas/.libs"/>
 								</option>
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.link.option.libs.1325284842" name="Libraries (-l)" superClass="gnu.c.link.option.libs" useByScannerDiscovery="false" valueType="libs">
+								<option id="gnu.c.link.option.libs.1325284842" name="Libraries (-l)" superClass="gnu.c.link.option.libs" useByScannerDiscovery="false" valueType="libs">
 									<listOptionValue builtIn="false" value="gd"/>
 									<listOptionValue builtIn="false" value="png"/>
 									<listOptionValue builtIn="false" value="z"/>
 									<listOptionValue builtIn="false" value="jpeg"/>
 									<listOptionValue builtIn="false" value="freetype"/>
-									<listOptionValue builtIn="false" value="gsl"/>
-									<listOptionValue builtIn="false" value="gslcblas"/>
 									<listOptionValue builtIn="false" value="m"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1775218552" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
