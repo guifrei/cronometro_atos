@@ -1,197 +1,83 @@
 //mencoder mf://f*.png -mf fps=1 -ovc copy -oac copy -o output.avi
 //ffmpeg -i output.avi -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p working.mp4
 
-
 //Extrai quadro a quadro
 //ffmpeg -i ~/WORSHIP\ COUNTDOWN\ 5\ MIN\ \(CONTAGEM\ REGRESSIVA\ -\ CULTO\ JOVEM\)-iTa_cDVN1xw.webm -r 24 image-%04d.bmp
+//ffmpeg -i VID_20200108_210308994.mp4 -r 24 leticia_%03d.bmp
 
 /* Bring in gd library functions */
 #include "gd.h"
-
 /* Bring in standard I/O so we can output the PNG to a file */
 #include <stdio.h>
 #include <math.h>
 
-double sq = sqrt(2.0) / 2.0 * 10.0;
+int w = 20;
+int npts = 500;
 
-int codes[] = { 119, 18, 93, 91, 58, 107, 111, 82, 127, 123 };
+void drawColor(gdImagePtr bmpMainFrame, int color, int shift) {
 
-int tmax = 5 * 60;
-int count = 0;
+	for (int j = shift * w; j < (shift + 1) * w; j++) {
+		double x1 = 650.0 - j;
+		double x2 = 1300.0 + j;
+		double y1 = -640.0;
+		double y2 = -550.0;
 
-void drawHorizontal(double xref, double yref, gdImagePtr im) {
-	//int white = gdImageColorAllocate(im, 255, 255, 255);
-	int black = gdImageColorAllocate(im, 0, 0, 0);
+		double xr = (x1 + x2) / 2.0;
+		double yr = (y1 + y2) / 2.0;
 
-	gdPointPtr points = (gdPointPtr) calloc(6, sizeof(gdPoint));
-	points[0].x = xref;
-	points[0].y = 5 + yref;
-
-	points[1].x = 5 + xref;
-	points[1].y = yref;
-
-	points[2].x = 95 + xref;
-	points[2].y = yref;
-
-	points[3].x = 100 + xref;
-	points[3].y = 5 + yref;
-
-	points[4].x = 95 + xref;
-	points[4].y = 10 + yref;
-
-	points[5].x = 5 + xref;
-	points[5].y = 10 + yref;
-
-	gdImageFilledPolygon(im, points, 6, black);
-	free(points);
-}
-
-void drawVertical(double xref, double yref, gdImagePtr im) {
-	//int white = gdImageColorAllocate(im, 255, 255, 255);
-	int black = gdImageColorAllocate(im, 0, 0, 0);
-
-	gdPointPtr points = (gdPointPtr) calloc(6, sizeof(gdPoint));
-	points[0].x = xref;
-	points[0].y = 5 + yref;
-
-	points[1].x = 5 + xref;
-	points[1].y = yref;
-
-	points[2].x = 10 + xref;
-	points[2].y = 5 + yref;
-
-	points[3].x = 10 + xref;
-	points[3].y = 75 + yref;
-
-	points[4].x = 5 + xref;
-	points[4].y = 80 + yref;
-
-	points[5].x = xref;
-	points[5].y = 75 + yref;
-
-	gdImageFilledPolygon(im, points, 6, black);
-	free(points);
-}
-
-void drawNumber(double shift, gdImagePtr im, int number) {
-	int code = codes[number];
-	int a = (code & 0x0040) >> 6;
-	int b = (code & 0x0020) >> 5;
-	int c = (code & 0x0010) >> 4;
-	int d = (code & 0x0008) >> 3;
-	int e = (code & 0x0004) >> 2;
-	int f = (code & 0x0002) >> 1;
-	int g = code & 0x0001;
-	if (a)
-		drawHorizontal(shift + 120, 120, im);
-	if (b)
-		drawVertical(shift + 115, 125, im);
-	if (c)
-		drawVertical(shift + 215, 125, im);
-	if (d)
-		drawHorizontal(shift + 120, 200, im);
-	if (e)
-		drawVertical(shift + 115, 205, im);
-	if (f)
-		drawVertical(shift + 215, 205, im);
-	if (g)
-		drawHorizontal(shift + 120, 280, im);
-}
-
-void drawTime(int time) {
-	/* Declare the image */
-	gdImagePtr im;
-	/* Declare output files */
-	FILE *pngout;
-	/* Declare color indexes */
-	int black;
-	int white;
-
-	/* Allocate the image: 64 pixels across by 64 pixels tall */
-	im = gdImageCreateTrueColor(720, 486);
-
-	/* Allocate the color black (red, green and blue all minimum).
-	 Since this is the first color in a new image, it will
-	 be the background color. */
-	white = gdImageColorAllocate(im, 255, 255, 255);
-	black = gdImageColorAllocate(im, 0, 0, 0);
-
-	for (int i = 0; i < 720; i++) {
-		for (int j = 0; j < 486; j++) {
-			gdImageSetPixel(im, i, j, white);
+		double r2 = (x1 - xr) * (x1 - xr) + (y1 - yr) * (y1 - yr);
+		double r = sqrt(r2);
+		double theta2 = atan((y2 - yr) / (x2 - xr));
+		double theta1 = theta2 + M_PI;
+		for (int i = 0; i <= npts; i++) {
+			double theta = (theta2 - theta1) / (double)npts * (double) i + theta1;
+			double x = xr + r * cos(theta);
+			double y = yr + r * sin(theta);
+			gdImageSetPixel(bmpMainFrame, x, -y, color);
 		}
 	}
-
-	double shift;
-
-	int min = time / 60;
-	int sec = time % 60;
-	int dmin = min / 10;
-	int umin = min % 10;
-	int dsec = sec / 10;
-	int usec = sec % 10;
-
-	shift = 0;
-	drawNumber(shift, im, dmin);
-
-	shift = 120;
-	drawNumber(shift, im, umin);
-
-	shift = 260;
-	drawNumber(shift, im, dsec);
-
-	shift = 380;
-	drawNumber(shift, im, usec);
-
-	gdImageFilledEllipse(im, 360, 160, 15, 15, black);
-	gdImageFilledEllipse(im, 360, 240, 15, 15, black);
-
-	FILE* png = fopen("logo atos.png", "rb");
-	gdImagePtr logo = gdImageCreateFromPng(png);
-	gdImagePaletteToTrueColor(logo);
-	int color = gdImageGetPixel(logo, 1, 1);
-	gdImageColorTransparent(logo, color);
-	gdImageAlphaBlending(logo, 0);
-	//gdImageSaveAlpha(logo, 1);
-	gdImageCopy(im, logo, 300, 300, 0, 0, 400, 165);
-
-	fclose(png);
-
-	/* Open a file for writing. "wb" means "write binary", important
-	 under MSDOS, harmless under Unix. */
-	char filename[9];
-	filename[8] = 0;
-	int i = tmax - time;
-	if (i < 10) {
-		sprintf(filename, "f00%d.png", i);
-	} else if (i < 100) {
-		sprintf(filename, "f0%d.png", i);
-	} else {
-		sprintf(filename, "f%d.png", i);
-	}
-	pngout = fopen(filename, "wb");
-
-	/* Output the image to the disk file in PNG format. */
-	gdImagePngEx(im, pngout, 0);
-
-	/* Close the files. */
-	fclose(pngout);
-
-	/* Destroy the image in memory. */
-	gdImageDestroy(logo);
-	gdImageDestroy(im);
 }
 
 int main() {
-	for (int i = 0; i <= tmax; i++)
-		if (i % 10 == 0)
-			printf("=");
-	printf("\n");
-	for (int i = 0; i <= tmax; i++) {
-		drawTime(tmax - i);
-		if (i % 10 == 0)
-			printf(".");
-	}
+
+	gdImagePtr bmpMainFrame = gdImageCreateTrueColor(1920, 1080);
+
+	FILE* bmpFrame = fopen("leticia_080.bmp", "rb");
+	gdImagePtr frame = gdImageCreateFromBmp(bmpFrame);
+
+	gdImageCopy(bmpMainFrame, frame, 0, 0, 0, 0, 1920, 1080);
+
+	int black = gdImageColorAllocate(bmpMainFrame, 0, 0, 0);
+	int white = gdImageColorAllocate(bmpMainFrame, 255, 255, 255);
+	gdImageFilledEllipse(bmpMainFrame, 1300, 550, 15, 15, black);
+	gdImageFilledEllipse(bmpMainFrame, 650, 640, 15, 15, white);
+
+	int red = gdImageColorAllocate(bmpMainFrame, 255, 0, 0);
+	drawColor(bmpMainFrame, red, 0);
+	int orange = gdImageColorAllocate(bmpMainFrame, 255, 165, 0);
+	drawColor(bmpMainFrame, orange, 1);
+	int yellow = gdImageColorAllocate(bmpMainFrame, 255, 255, 0);
+	drawColor(bmpMainFrame, yellow, 2);
+	int green = gdImageColorAllocate(bmpMainFrame, 0, 255, 0);
+	drawColor(bmpMainFrame, green, 3);
+	int blue = gdImageColorAllocate(bmpMainFrame, 0, 0, 255);
+	drawColor(bmpMainFrame, blue, 4);
+	int indigo = gdImageColorAllocate(bmpMainFrame, 75, 0, 130);
+	drawColor(bmpMainFrame, indigo, 5);
+	int violet = gdImageColorAllocate(bmpMainFrame, 79, 47, 79);
+	drawColor(bmpMainFrame, violet, 6);
+
+	FILE* mainFrame = fopen("teste.bmp", "w");
+	gdImageBmp(bmpMainFrame, mainFrame, 0);
+
+	gdImageDestroy(bmpMainFrame);
+	fclose(mainFrame);
+
+	gdImageDestroy(frame);
+	fclose(bmpFrame);
+
+	return 0;
+
 	printf("\n");
 	system("mencoder mf://f*.png -mf fps=1 -ovc copy -oac copy -o output.avi");
 	system("ffmpeg -y -i output.avi -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p working.mp4");
