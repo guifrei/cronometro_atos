@@ -41,6 +41,8 @@ void drawColor(gdImagePtr bmpMainFrame, int color, int shift, double ang) {
 
 int main() {
 
+	system("ffmpeg -i VID_20200108_210308994.mp4 -r 24 leticia_%03d.jpg");
+
 	char bmpInputFileName[16];
 	char bmpOutputFileName[17];
 
@@ -98,6 +100,8 @@ int main() {
 		fclose(bmpFrame);
 	}
 
+	system("mencoder mf://letician*.jpg -mf fps=1 -ovc copy -oac copy -o output.avi");
+	system("ffmpeg -y -i output.avi -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p working.mp4");
 	return 0;
 
 	printf("\n");
