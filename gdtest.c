@@ -40,6 +40,22 @@ void drawColor(gdImagePtr bmpMainFrame, int color, int shift, double ang) {
 }
 
 int main() {
+	gdImagePtr bmpMainFrame = gdImageCreateTrueColor(1920, 1080);
+	int white = gdImageColorAllocate(bmpMainFrame, 255, 255, 255);
+	gdImageFill(bmpMainFrame,100, 100, white);
+
+	int black = gdImageColorAllocate(bmpMainFrame, 0, 0, 0);
+
+	gdImageFilledArc(bmpMainFrame, 500, 500, 100, 100, 10, 10, black, gdArc);
+
+	FILE* mainFrame = fopen("teste.jpg", "w");
+	gdImageJpeg(bmpMainFrame, mainFrame, 100);
+
+	gdImageDestroy(bmpMainFrame);
+	fclose(mainFrame);
+}
+
+int main0() {
 	system("mkdir input");
 	system("mkdir output");
 	system("ffmpeg -i VID_20200108_210308994.mp4 -r 24 input/leticia_%03d.jpg");
