@@ -100,11 +100,11 @@ int main() {
 		fclose(bmpFrame);
 	}
 
-	system("mencoder mf://letician*.jpg -mf fps=1 -ovc copy -oac copy -o output.avi");
+	system("mencoder mf://letician*.jpg -mf fps=24 -ovc copy -oac copy -o output.avi");
 	system("ffmpeg -y -i output.avi -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p working.mp4");
 	return 0;
 
 	printf("\n");
-	system("mencoder mf://f*.png -mf fps=1 -ovc copy -oac copy -o output.avi");
+	system("mencoder mf://f*.png -mf fps=24 -ovc copy -oac copy -o output.avi");
 	system("ffmpeg -y -i output.avi -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p working.mp4");
 }
