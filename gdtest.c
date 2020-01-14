@@ -40,11 +40,12 @@ void drawColor(gdImagePtr bmpMainFrame, int color, int shift, double ang) {
 }
 
 int main() {
+	system("mkdir input");
+	system("mkdir output");
+	system("ffmpeg -i VID_20200108_210308994.mp4 -r 24 input/leticia_%03d.jpg");
 
-	system("ffmpeg -i VID_20200108_210308994.mp4 -r 24 leticia_%03d.jpg");
-
-	char bmpInputFileName[16];
-	char bmpOutputFileName[17];
+	char bmpInputFileName[22];
+	char bmpOutputFileName[23];
 
 	int startidx = 24;
 	int stopidx = 57;
@@ -52,17 +53,17 @@ int main() {
 	for (int idx = startidx; idx <= endidx; idx++) {
 		printf("%i\n", idx);
 		if (idx < 10) {
-			sprintf(bmpInputFileName, "leticia_00%d.jpg", idx);
-			sprintf(bmpOutputFileName, "letician_00%d.jpg", idx);
+			sprintf(bmpInputFileName, "input/leticia_00%d.jpg", idx);
+			sprintf(bmpOutputFileName, "output/leticia_00%d.jpg", idx);
 		} else if (idx < 100) {
-			sprintf(bmpInputFileName, "leticia_0%d.jpg", idx);
-			sprintf(bmpOutputFileName, "letician_0%d.jpg", idx);
+			sprintf(bmpInputFileName, "input/leticia_0%d.jpg", idx);
+			sprintf(bmpOutputFileName, "output/leticia_0%d.jpg", idx);
 		} else {
-			sprintf(bmpInputFileName, "leticia_%d.jpg", idx);
-			sprintf(bmpOutputFileName, "letician_%d.jpg", idx);
+			sprintf(bmpInputFileName, "input/leticia_%d.jpg", idx);
+			sprintf(bmpOutputFileName, "output/leticia_%d.jpg", idx);
 		}
-		bmpInputFileName[15] = '\0';
-		bmpOutputFileName[16] = '\0';
+		bmpInputFileName[21] = '\0';
+		bmpOutputFileName[22] = '\0';
 
 		gdImagePtr bmpMainFrame = gdImageCreateTrueColor(1920, 1080);
 
@@ -100,11 +101,11 @@ int main() {
 		fclose(bmpFrame);
 	}
 
-	system("mencoder mf://letician*.jpg -mf fps=24 -ovc copy -oac copy -o output.avi");
-	system("ffmpeg -y -i output.avi -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p working.mp4");
+	system("mencoder mf://output/leticia*.jpg -mf fps=24 -ovc copy -oac copy -o output.avi");
+	system("ffmpeg -y -i output.avi -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p output.mp4");
 	return 0;
 
 	printf("\n");
 	system("mencoder mf://f*.png -mf fps=24 -ovc copy -oac copy -o output.avi");
-	system("ffmpeg -y -i output.avi -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p working.mp4");
+	system("ffmpeg -y -i output.avi -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p output.mp4");
 }
