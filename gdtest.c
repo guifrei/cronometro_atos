@@ -40,19 +40,62 @@ void drawColor(gdImagePtr bmpMainFrame, int color, int shift, double ang) {
 }
 
 int main() {
-	gdImagePtr bmpMainFrame = gdImageCreateTrueColor(1920, 1080);
-	int white = gdImageColorAllocate(bmpMainFrame, 255, 255, 255);
-	gdImageFill(bmpMainFrame,100, 100, white);
+	for (int i = 0; i < 301; i++) {
+		int ileft = i + 2085;
+		int iright = i + 609;
 
-	int black = gdImageColorAllocate(bmpMainFrame, 0, 0, 0);
+		char bmpLeftFileName[22];
+		bmpLeftFileName[21] = 0;
 
-	gdImageFilledArc(bmpMainFrame, 500, 500, 100, 100, 10, 10, black, gdArc);
+		if (ileft < 10) {
+			sprintf(bmpLeftFileName, "left/leticia_000%d.bmp", ileft);
+		} else if (ileft < 100) {
+			sprintf(bmpLeftFileName, "left/leticia_00%d.bmp", ileft);
+		} else if (ileft < 1000) {
+			sprintf(bmpLeftFileName, "left/leticia_0%d.bmp", ileft);
+		} else
+			sprintf(bmpLeftFileName, "left/leticia_%d.bmp", ileft);
 
-	FILE* mainFrame = fopen("teste.jpg", "w");
-	gdImageJpeg(bmpMainFrame, mainFrame, 100);
+		char bmpRightFileName[23];
+		bmpRightFileName[22] = 0;
 
-	gdImageDestroy(bmpMainFrame);
-	fclose(mainFrame);
+		if (iright < 10) {
+			sprintf(bmpRightFileName, "right/leticia_000%d.bmp", iright);
+		} else if (iright < 100) {
+			sprintf(bmpRightFileName, "right/leticia_00%d.bmp", iright);
+		} else if (iright < 1000) {
+			sprintf(bmpRightFileName, "right/leticia_0%d.bmp", iright);
+		} else
+			sprintf(bmpRightFileName, "right/leticia_%d.bmp", iright);
+
+		gdImagePtr bmpMainFrame = gdImageCreateTrueColor(1920, 1080);
+		gdImagePtr leftFrame = gdImageCreateFromFile(bmpLeftFileName);
+		gdImagePtr rightFrame = gdImageCreateFromFile(bmpRightFileName);
+
+		int xcrop = 960;
+
+		gdImageCopy(bmpMainFrame, leftFrame, 0, 0, 0, 0, xcrop, 1080);
+		gdImageCopy(bmpMainFrame, rightFrame, xcrop, 0, xcrop, 0, 1920 - xcrop, 1080);
+
+		char outFileName[15];
+		outFileName[14] = 0;
+		if (i < 10) {
+			sprintf(outFileName, "teste_000%d.bmp", i);
+		} else if (i < 100) {
+			sprintf(outFileName, "teste_00%d.bmp", i);
+		} else if (i < 1000) {
+			sprintf(outFileName, "teste_0%d.bmp", i);
+		} else
+			sprintf(outFileName, "teste_%d.bmp", i);
+
+		gdImageFile(bmpMainFrame, outFileName);
+
+		gdImageDestroy(bmpMainFrame);
+		gdImageDestroy(rightFrame);
+		gdImageDestroy(leftFrame);
+		printf("%d\n", i);
+	}
+
 }
 
 int main0() {
