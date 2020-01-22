@@ -72,7 +72,10 @@ int main() {
 		gdImagePtr leftFrame = gdImageCreateFromFile(bmpLeftFileName);
 		gdImagePtr rightFrame = gdImageCreateFromFile(bmpRightFileName);
 
-		int xcrop = 960;
+		int xcrop ;
+
+		if (i < 134) xcrop = 800;
+		else xcrop = 1250;
 
 		gdImageCopy(bmpMainFrame, leftFrame, 0, 0, 0, 0, xcrop, 1080);
 		gdImageCopy(bmpMainFrame, rightFrame, xcrop, 0, xcrop, 0, 1920 - xcrop, 1080);
@@ -80,13 +83,13 @@ int main() {
 		char outFileName[15];
 		outFileName[14] = 0;
 		if (i < 10) {
-			sprintf(outFileName, "teste_000%d.bmp", i);
+			sprintf(outFileName, "teste_000%d.jpg", i);
 		} else if (i < 100) {
-			sprintf(outFileName, "teste_00%d.bmp", i);
+			sprintf(outFileName, "teste_00%d.jpg", i);
 		} else if (i < 1000) {
-			sprintf(outFileName, "teste_0%d.bmp", i);
+			sprintf(outFileName, "teste_0%d.jpg", i);
 		} else
-			sprintf(outFileName, "teste_%d.bmp", i);
+			sprintf(outFileName, "teste_%d.jpg", i);
 
 		gdImageFile(bmpMainFrame, outFileName);
 
